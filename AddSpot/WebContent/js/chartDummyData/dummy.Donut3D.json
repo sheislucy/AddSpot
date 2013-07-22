@@ -1,0 +1,66 @@
+{
+    "chart": {
+        "caption": "人口增长率",
+        "subcaption": "(地区)",
+        "palette": "4",
+        "decimals": "0",
+        "enablesmartlabels": "1",
+        "enablerotation": "0",
+        "bgangle": "360",
+        "showborder": "0",
+        "startingangle": "70"
+    },
+    "data": [
+        {
+            "label": "地区1",
+            "value": "17"
+        },
+        {
+            "label": "地区2",
+            "value": "12"
+        },
+        {
+            "label": "地区3",
+            "value": "18"
+        },
+        {
+            "label": "地区4",
+            "value": "8",
+            "issliced": "1"
+        },
+        {
+            "label": "地区5",
+            "value": "10",
+            "issliced": "1"
+        },
+        {
+            "label": "地区6",
+            "value": "16",
+            "issliced": "1"
+        },
+        {
+            "label": "地区7",
+            "value": "11"
+        },
+        {
+            "label": "地区8",
+            "value": "12"
+        },
+        {
+            "label": "地区9",
+            "value": "8"
+        },
+        {
+            "label": "地区10",
+            "value": "10"
+        },
+        {
+            "label": "地区11",
+            "value": "19"
+        },
+        {
+            "label": "地区12",
+            "value": "15"
+        }
+    ]
+}

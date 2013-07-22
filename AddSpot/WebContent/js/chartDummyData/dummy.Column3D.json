@@ -1,0 +1,168 @@
+{
+	"chart" : {
+		"caption" : "2013销售统计",
+		"xaxisname" : "月",
+		"palette" : "2",
+		"animation" : "1",
+		"formatnumberscale" : "0",
+		"numberprefix" : "￥",
+		"showvalues" : "0",
+		"numdivlines" : "4",
+		"legendposition" : "BOTTOM"
+	},
+	"categories" : [ {
+		"category" : [ {
+			"label" : "1月"
+		}, {
+			"label" : "2月"
+		}, {
+			"label" : "3月"
+		}, {
+			"label" : "4月"
+		}, {
+			"label" : "5月"
+		}, {
+			"label" : "6月"
+		} ]
+	} ],
+	"dataset" : [ {
+		"seriesname" : "猪",
+		"data" : [ {
+			"value" : "11675.25"
+		}, {
+			"value" : "28558"
+		}, {
+			"value" : "35869.5"
+		}, {
+			"value" : "28729.25"
+		}, {
+			"value" : "24960"
+		}, {
+			"value" : "4107"
+		} ]
+	}, {
+		"seriesname" : "鸡",
+		"data" : [ {
+			"value" : "6252.6"
+		}, {
+			"value" : "5000.45"
+		}, {
+			"value" : "6727.2"
+		}, {
+			"value" : "11018.3"
+		}, {
+			"value" : "10737.5"
+		}, {
+			"value" : "1074"
+		} ]
+	}, {
+		"seriesname" : "豆制品",
+		"data" : [ {
+			"value" : "9191.98"
+		}, {
+			"value" : "11839.85"
+		}, {
+			"value" : "10574.05"
+		}, {
+			"value" : "24302.85"
+		}, {
+			"value" : "10309.78"
+		}, {
+			"value" : "1333.2"
+		} ]
+	}, {
+		"seriesname" : "奶制品",
+		"data" : [ {
+			"value" : "10590.5"
+		}, {
+			"value" : "18835.5"
+		}, {
+			"value" : "11889.5"
+		}, {
+			"value" : "14990.8"
+		}, {
+			"value" : "36452.1"
+		}, {
+			"value" : "636"
+		} ]
+	}, {
+		"seriesname" : "谷物",
+		"data" : [ {
+			"value" : "5810.75"
+		}, {
+			"value" : "12517.75"
+		}, {
+			"value" : "4183.75"
+		}, {
+			"value" : "3510.5"
+		}, {
+			"value" : "5789.25"
+		}, {
+			"value" : "4421"
+		} ]
+	}, {
+		"seriesname" : "肉/禽",
+		"data" : [ {
+			"value" : "14706.43"
+		}, {
+			"value" : "3965.17"
+		}, {
+			"value" : "25377.86"
+		}, {
+			"value" : "4203.66"
+		}, {
+			"value" : "26680.88"
+		}, {
+			"value" : "48"
+		} ]
+	}, {
+		"seriesname" : "蔬菜",
+		"data" : [ {
+			"value" : "13047.15"
+		}, {
+			"value" : "1639"
+		}, {
+			"value" : "1202.8"
+		}, {
+			"value" : "13168"
+		}, {
+			"value" : "15073"
+		}, {
+			"value" : "1333.05"
+		} ]
+	}, {
+		"seriesname" : "海鲜",
+		"data" : [ {
+			"value" : "6201.6"
+		}, {
+			"value" : "14394.6"
+		}, {
+			"value" : "12841.69"
+		}, {
+			"value" : "9902.09"
+		}, {
+			"value" : "10531.66"
+		}, {
+			"value" : "1042.8"
+		} ]
+	} ],
+	"styles" : {
+		"definition" : [ {
+			"type" : "font",
+			"name" : "CaptionFont",
+			"color" : "666666",
+			"size" : "15"
+		}, {
+			"type" : "font",
+			"name" : "SubCaptionFont",
+			"bold" : "0"
+		} ],
+		"application" : [ {
+			"toobject" : "caption",
+			"styles" : "CaptionFont"
+		}, {
+			"toobject" : "SubCaption",
+			"styles" : "SubCaptionFont"
+		} ]
+	}
+}

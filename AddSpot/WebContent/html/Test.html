@@ -1,0 +1,96 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<link type="text/css" rel="stylesheet" href="../css/jquery-ui-1.10.3.custom.min.css" />
+<link type="text/css" rel="stylesheet" href="../css/common.css" />
+<link type="text/css" rel="stylesheet" href="../css/myMap.css" />
+<script type="text/javascript" src="../js/jquery-1.7.2.min.js"></script>
+<script type="text/javascript" src="../js/jquery-ui-1.10.3.custom.min.js"></script>
+<script type="text/javascript" src="../js/OpenLayers_dev.js"></script>
+<script type="text/javascript" src="../js/myLayerSwitcher.js"></script>
+<script type="text/javascript" src="../js/myMarker.js"></script>
+<script type="text/javascript" src="../js/myPanZoomBar.js"></script>
+<script type="text/javascript" src="../js/myMap.js"></script>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<div id="tool-bar" class="ui-widget-header">
+		<div id="controlRadio">
+			<p><input name="control" id="cursor" type="radio" checked/><label for="cursor" class="title">普通鼠标</label></p>
+			<p><input name="control" id="drawer" type="radio" /><label for="drawer" class="title">选择画笔</label></p>
+		</div>
+		<div id="shapeRadio" class="hide">
+			<p><input name="shape" id="point" type="radio" /><label for="point">画点</label></p>
+			<p><input name="shape" id="line" type="radio" /><label for="line">画线段</label></p>
+			<p><input name="shape" id="polygon" type="radio" /><label for="polygon">画多边形</label></p>
+		</div>
+		<div id="polygonRadio" class="hide">
+			<p><input name="polygonType" id="freeform" type="radio" /><label for="freeform">任意多边形</label></p>
+			<p><input name="polygonType" id="triangle" type="radio" /><label for="triangle">三角形</label><input name="polygonType" id="regTriangle" type="radio" /><label for="regTriangle">正三角形</label></p>
+			<p><input name="polygonType" id="rectangle" type="radio" /><label for="rectangle">&nbsp;矩&nbsp;形&nbsp;</label><input name="polygonType" id="square" type="radio" /><label for="square">&nbsp;正方形&nbsp;&nbsp;</label></p>
+			<p><input name="polygonType" id="pentagon" type="radio" /><label for="pentagon">五边形</label><input name="polygonType" id="regPentagon" type="radio" /><label for="regPentagon">正五边形</label></p>
+			<p><input name="polygonType" id="hexagon" type="radio" /><label for="hexagon">六边形</label><input name="polygonType" id="regHexagon" type="radio" /><label for="regHexagon">正六边形</label></p>
+			<p><input name="polygonType" id="oval" type="radio" /><label for="oval">&nbsp;椭&nbsp;圆&nbsp;</label><input name="polygonType" id="circle" type="radio" /><label for="circle">&nbsp;&nbsp;圆&nbsp;形&nbsp;&nbsp;&nbsp;</label></p>
+		</div>
+	</div>
+	<div id="map-wrapper">
+		<div id="explore-map" style="width: 800px; height: 600px">
+		</div>
+	</div>
+<script type="text/javascript">
+	$(function(){
+		var lastPaintBrush;
+		
+		$("#controlRadio").buttonset();
+		$("#shapeRadio").buttonset();
+		$("#polygonRadio").buttonset();
+		$('[for=cursor]').click(function(){
+			if($(this).attr("aria-pressed") == "true"){
+				switchToUnEditMode();
+				$("#polygonRadio").hide("fast");
+				$("#shapeRadio").hide("fast");
+			}
+		});
+		$('[for=drawer]').click(function(){
+			if($(this).attr("aria-pressed") == "true"){
+				if(lastPaintBrush){
+					lastPaintBrush.click();
+				}
+				$("#shapeRadio").show("fast");
+				if($('[for=polygon]').attr("aria-pressed") == "true"){
+					$("#polygonRadio").show("fast");
+				}
+			}
+		});
+		$('[for=point]').click(function(){
+			if($(this).attr("aria-pressed") == "true"){
+				switchToEditMode("point");
+				$("#polygonRadio").hide("fast");
+				lastPaintBrush = $(this);
+			}
+		});
+		$('[for=line]').click(function(){
+			if($(this).attr("aria-pressed") == "true"){
+				switchToEditMode("line");
+				$("#polygonRadio").hide("fast");
+				lastPaintBrush = $(this);
+			}
+		});
+		$('[for=polygon]').click(function(){
+			if($(this).attr("aria-pressed") == "true"){
+				$("#polygonRadio").show("fast");
+			}
+		});
+		$('#polygonRadio > p > label').click(function(){
+			switchToEditMode($(this).attr("for"));
+			lastPaintBrush = $(this);
+		});
+		
+		var mapManager = new MapManager();
+		mapManager.genMap({ view_width:"438", view_height:"620",mapId: "Map05",  mapName:"土地规划总图", mapImageUrl:"/images/Map05.jpg", }, 
+				{ points:[{x:157, y:288, featureId: 1}]});
+	});
+</script>
+</body>
+</html>

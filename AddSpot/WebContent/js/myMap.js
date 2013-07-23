@@ -72,7 +72,11 @@ var MapManager = function() {
 /**
  * mapMeta:{ view_width:"", view_height:"", mapName:"", mapImageUrl:"", mapId:"" }
  * 
- * hotspotMeta:{ points:[{x:"",y:"", featureId:""}], polygons:[] }
+ * hotspotMeta:{ points:[{x:"",y:"", featureId:""}], 
+ * 
+ * polygons:[{polygon: [{polygon_unit: [{x: "", y: ""}]}], featureId:""}], 
+ * 
+ * lines: [{line: [{x:"",y:"", featureId:""}], featureId:""}] }
  * 
  */
 MapManager.prototype.genMap = function(mapMeta, hotspotMeta) {
@@ -184,9 +188,9 @@ MapManager.prototype.genMap = function(mapMeta, hotspotMeta) {
 			symbolizer : {
 				strokeWidth : 2,
 				strokeOpacity : 0.6,
-				strokeColor : "navy",
-				fillColor : "#5571DD",
-				fillOpacity : 0.2
+				strokeColor : "#00ffa5",
+				fillColor : "#defaf9",
+				fillOpacity : 0.4
 			}
 		}), new Rule({
 			filter : new Filter.Comparison({
@@ -195,9 +199,9 @@ MapManager.prototype.genMap = function(mapMeta, hotspotMeta) {
 				value : "lineDefault"
 			}),
 			symbolizer : {
-				strokeWidth : 3,
+				strokeWidth : 5,
 				strokeOpacity : 0.6,
-				strokeColor : "navy"
+				strokeColor : "#d21838"
 			}
 		}) ]
 	});
@@ -232,9 +236,9 @@ MapManager.prototype.genMap = function(mapMeta, hotspotMeta) {
 			symbolizer : {
 				strokeWidth : 2,
 				strokeOpacity : 0.7,
-				strokeColor : "#66cccc",
-				fillColor : "#ED57B1",
-				fillOpacity : 0.2
+				strokeColor : "#4be900",
+				fillColor : "#defaf9",
+				fillOpacity : 0.5
 			}
 		}), new Rule({
 			filter : new Filter.Comparison({
@@ -243,14 +247,14 @@ MapManager.prototype.genMap = function(mapMeta, hotspotMeta) {
 				value : "lineDefault"
 			}),
 			symbolizer : {
-				strokeWidth : 3,
-				strokeOpacity : 0.6,
-				strokeColor : "maroon"
+				strokeWidth : 5,
+				strokeOpacity : 0.7,
+				strokeColor : "#fd0392"
 			}
 		}) ]
 	});
-
-	var vectorLayer = new OpenLayers.Layer.Vector("规划", {
+	
+	var vectorLayer = new OpenLayers.Layer.Vector("瑙勫垝", {
 		styleMap : new OpenLayers.StyleMap({
 			"default" : defaultStyle,
 			"select" : selectStyle
@@ -268,7 +272,7 @@ MapManager.prototype.genMap = function(mapMeta, hotspotMeta) {
 	highlightCtrlr = new OpenLayers.Control.SelectFeature(vectorLayer, {
 		hover : true,
 		highlightOnly : true,
-		renderIntent : "temporary",
+		renderIntent : "select",
 		geometryTypes : ["OpenLayers.Geometry.Polygon", "OpenLayers.Geometry.LineString"]
 	});
 	// select points
@@ -288,6 +292,9 @@ MapManager.prototype.genMap = function(mapMeta, hotspotMeta) {
 	};
 	
 	drawControls.point.handler.callbacks.done = pointCtrlDone;
+	drawControls.line.handler.callbacks.done = lineCtrlDone;
+	drawControls.freeformPolygon.handler.callbacks.done = polygonCtrlDone;
+	drawControls.polygon.handler.callbacks.done = polygonCtrlDone;
 
 	this.map.addLayers([graphic1, vectorLayer]);
 	this.map.addControls([ switcher, highlightCtrlr, selectCtrlr,
@@ -300,6 +307,42 @@ MapManager.prototype.genMap = function(mapMeta, hotspotMeta) {
 	});
 	highlightCtrlr.activate();
 	selectCtrlr.activate();
+};
+
+var polygonCtrlDone = function(geometry){
+	var feature = new OpenLayers.Feature.Vector(geometry, {
+		styleClass : "zoneDefault"
+	});
+	var proceed = this.handler.layer.events.triggerEvent("sketchcomplete", {
+		feature : feature
+	}); 
+
+    if(proceed !== false) {
+        feature.state = OpenLayers.State.INSERT;
+        this.handler.control.layer.addFeatures([feature]);
+        this.handler.control.featureAdded(feature);
+        this.handler.control.events.triggerEvent("featureadded",{feature : feature});
+    }
+    
+  //TODO show users overlay
+};
+
+var lineCtrlDone = function(geometry){
+	var feature = new OpenLayers.Feature.Vector(geometry, {
+		styleClass : "lineDefault"
+	});
+	var proceed = this.handler.layer.events.triggerEvent("sketchcomplete", {
+		feature : feature
+	}); 
+
+    if(proceed !== false) {
+        feature.state = OpenLayers.State.INSERT;
+        this.handler.control.layer.addFeatures([feature]);
+        this.handler.control.featureAdded(feature);
+        this.handler.control.events.triggerEvent("featureadded",{feature : feature});
+    }
+    
+  //TODO show users overlay
 };
 
 var pointCtrlDone = function(geometry){

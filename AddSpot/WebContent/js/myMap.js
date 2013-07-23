@@ -188,6 +188,17 @@ MapManager.prototype.genMap = function(mapMeta, hotspotMeta) {
 				fillColor : "#5571DD",
 				fillOpacity : 0.2
 			}
+		}), new Rule({
+			filter : new Filter.Comparison({
+				type : "==",
+				property : "styleClass",
+				value : "lineDefault"
+			}),
+			symbolizer : {
+				strokeWidth : 3,
+				strokeOpacity : 0.6,
+				strokeColor : "navy"
+			}
 		}) ]
 	});
 
@@ -225,6 +236,17 @@ MapManager.prototype.genMap = function(mapMeta, hotspotMeta) {
 				fillColor : "#ED57B1",
 				fillOpacity : 0.2
 			}
+		}), new Rule({
+			filter : new Filter.Comparison({
+				type : "==",
+				property : "styleClass",
+				value : "lineDefault"
+			}),
+			symbolizer : {
+				strokeWidth : 3,
+				strokeOpacity : 0.6,
+				strokeColor : "maroon"
+			}
 		}) ]
 	});
 
@@ -247,7 +269,7 @@ MapManager.prototype.genMap = function(mapMeta, hotspotMeta) {
 		hover : true,
 		highlightOnly : true,
 		renderIntent : "temporary",
-		geometryTypes : "OpenLayers.Geometry.Polygon"
+		geometryTypes : ["OpenLayers.Geometry.Polygon", "OpenLayers.Geometry.LineString"]
 	});
 	// select points
 	selectCtrlr = new OpenLayers.Control.SelectFeature(vectorLayer, {
@@ -265,24 +287,7 @@ MapManager.prototype.genMap = function(mapMeta, hotspotMeta) {
 		polygon : new OpenLayers.Control.DrawFeature(vectorLayer, OpenLayers.Handler.RegularPolygon)
 	};
 	
-	drawControls.point.handler.callbacks.done = function(geometry){
-		// this.handlerOptions.layerOptions = {styleMap: new OpenLayers.StyleMap({"default" : defaultStyle,
-			// "select" : selectStyle})};
-			//TODO
-		var feature = new OpenLayers.Feature.Vector(geometry, {
-			styleClass : "pointDefault"
-		});
-		var proceed = this.handler.layer.events.triggerEvent("sketchcomplete", {
-			feature : feature
-		}); 
-
-        if(proceed !== false) {
-            feature.state = OpenLayers.State.INSERT;
-            this.handler.control.layer.addFeatures([feature]);
-            this.handler.control.featureAdded(feature);
-            this.handler.control.events.triggerEvent("featureadded",{feature : feature});
-        }
-	};
+	drawControls.point.handler.callbacks.done = pointCtrlDone;
 
 	this.map.addLayers([graphic1, vectorLayer]);
 	this.map.addControls([ switcher, highlightCtrlr, selectCtrlr,
@@ -295,6 +300,24 @@ MapManager.prototype.genMap = function(mapMeta, hotspotMeta) {
 	});
 	highlightCtrlr.activate();
 	selectCtrlr.activate();
+};
+
+var pointCtrlDone = function(geometry){
+	var feature = new OpenLayers.Feature.Vector(geometry, {
+		styleClass : "pointDefault"
+	});
+	var proceed = this.handler.layer.events.triggerEvent("sketchcomplete", {
+		feature : feature
+	}); 
+
+    if(proceed !== false) {
+        feature.state = OpenLayers.State.INSERT;
+        this.handler.control.layer.addFeatures([feature]);
+        this.handler.control.featureAdded(feature);
+        this.handler.control.events.triggerEvent("featureadded",{feature : feature});
+    }
+    
+  //TODO show users overlay
 };
 
 var switchToUnEditMode = function(){

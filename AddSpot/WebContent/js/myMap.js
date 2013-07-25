@@ -238,7 +238,8 @@ MapManager.prototype.genMap = function(mapMeta, hotspotMeta) {
 				strokeOpacity : 0.7,
 				strokeColor : "#4be900",
 				fillColor : "#defaf9",
-				fillOpacity : 0.5
+				fillOpacity : 0.5,
+				cursor : "pointer"
 			}
 		}), new Rule({
 			filter : new Filter.Comparison({
@@ -249,12 +250,13 @@ MapManager.prototype.genMap = function(mapMeta, hotspotMeta) {
 			symbolizer : {
 				strokeWidth : 5,
 				strokeOpacity : 0.7,
-				strokeColor : "#fd0392"
+				strokeColor : "#fd0392",
+				cursor : "pointer"
 			}
 		}) ]
 	});
 	
-	var vectorLayer = new OpenLayers.Layer.Vector("瑙勫垝", {
+	var vectorLayer = new OpenLayers.Layer.Vector("热点", {
 		styleMap : new OpenLayers.StyleMap({
 			"default" : defaultStyle,
 			"select" : selectStyle

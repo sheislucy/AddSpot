@@ -309,6 +309,49 @@ MapManager.prototype.genMap = function(mapMeta, hotspotMeta) {
 	});
 	highlightCtrlr.activate();
 	selectCtrlr.activate();
+	
+	OpenLayers.Event.observe(document, "keydown", function(evt) {
+		if(drawControls.freeformPolygon.active === true){
+			undoRedo(drawControls.freeformPolygon, evt);
+		} else if (drawControls.line.active === true){
+			undoRedo(drawControls.line, evt);
+		} else if (selectCtrlr.active === true){
+			removeFeature(selectCtrlr, evt);
+		}
+	});
+	return selectCtrlr;
+};
+
+var removeFeature = function (selectCtrl, evt){
+	if(evt.keyCode == OpenLayers.Event.KEY_BACKSPACE){
+		$("#delete-confirm-dialog").selectCtrl = selectCtrl;
+		$("#delete-confirm-dialog").dialog("open");
+	}
+};
+
+var undoRedo = function (draw, evt){
+	var handled = false;
+	switch (evt.keyCode) {
+	case 90: // z
+		if (evt.metaKey || evt.ctrlKey) {
+			draw.undo();
+			handled = true;
+		}
+		break;
+	case 89: // y
+		if (evt.metaKey || evt.ctrlKey) {
+			draw.redo();
+			handled = true;
+		}
+		break;
+	case 27: // esc
+		draw.cancel();
+		handled = true;
+		break;
+	}
+	if (handled) {
+		OpenLayers.Event.stop(evt);
+	}
 };
 
 var polygonCtrlDone = function(geometry){
@@ -362,7 +405,7 @@ var pointCtrlDone = function(geometry){
         this.handler.control.events.triggerEvent("featureadded",{feature : feature});
     }
     
-  //TODO show users overlay
+    $( "#point-people-dialog" ).dialog( "open" );
 };
 
 var switchToUnEditMode = function(){
@@ -533,22 +576,118 @@ var getMapAndHotSpot = function(mapId) {
 			mapMeta.view_height = map_height;
 			var mapManager = new MapManager();
 			mapManager.genMap(mapMeta, hotspotMeta);
-			// flyZoomBarAndSwitcher();
 		}
 	});
 };
 
-var flyZoomBarAndSwitcher = function() {
-	var zoomDiv = $('div[id^=MyPanZoomBar]');
-	if (zoomDiv && zoomDiv.length > 0) {
-		zoomDiv[0].style.position = "fixed";
-		zoomDiv[0].style.top = 20 + "%";
-		zoomDiv[0].style.left = 5 + "%";
-	}
-	var switcherDiv = $('div[id^=OpenLayers\\.Control\\.LayerSwitcher]');
-	if (switcherDiv && switcherDiv.length > 0) {
-		switcherDiv[0].style.position = "fixed";
-		switcherDiv[0].style.top = 20 + "%";
-		switcherDiv[0].style.right = 8 + "%";
-	}
-};
+//---------------------dialog and init------------------
+function updateTips( t ) {
+    $(".validateTips").text( t ).addClass( "ui-state-highlight" );
+  }
+
+function checkNotNull( o, n ) {
+    if ( o.val().length == 0 ) {
+      o.addClass( "ui-state-error" );
+      updateTips( n + "不允许为空"+ "." );
+      return false;
+    } else {
+      return true;
+    }
+}
+
+function initAll(){
+	var lastPaintBrush;
+	
+	$("#controlRadio").buttonset();
+	$("#shapeRadio").buttonset();
+	$("#polygonRadio").buttonset();
+	$('[for=cursor]').click(function(){
+		if($(this).attr("aria-pressed") == "true"){
+			switchToUnEditMode();
+			$("#polygonRadio").hide("fast");
+			$("#shapeRadio").hide("fast");
+		}
+	});
+	$('[for=drawer]').click(function(){
+		if($(this).attr("aria-pressed") == "true"){
+			if(lastPaintBrush){
+				lastPaintBrush.click();
+			}
+			$("#shapeRadio").show("fast");
+			if($('[for=polygon]').attr("aria-pressed") == "true"){
+				$("#polygonRadio").show("fast");
+			}
+		}
+	});
+	$('[for=point]').click(function(){
+		if($(this).attr("aria-pressed") == "true"){
+			switchToEditMode("point");
+			$("#polygonRadio").hide("fast");
+			lastPaintBrush = $(this);
+		}
+	});
+	$('[for=line]').click(function(){
+		if($(this).attr("aria-pressed") == "true"){
+			switchToEditMode("line");
+			$("#polygonRadio").hide("fast");
+			lastPaintBrush = $(this);
+		}
+	});
+	$('[for=polygon]').click(function(){
+		if($(this).attr("aria-pressed") == "true"){
+			$("#polygonRadio").show("fast");
+		}
+	});
+	$('#polygonRadio > p > label').click(function(){
+		switchToEditMode($(this).attr("for"));
+		lastPaintBrush = $(this);
+	});
+	
+	var mapManager = new MapManager();
+	var selectCtrlr = mapManager.genMap({ view_width:"438", view_height:"620",mapId: "Map05",  mapName:"土地规划总图", mapImageUrl:"/images/Map05.jpg", }, 
+			{ points:[{x:157, y:288, featureId: 1}]});
+	
+	$( "#point-people-dialog" ).dialog({
+		autoOpen: false,
+		height: 300,
+		width: 350,
+		modal: true,
+		buttons: {
+			"完成": function() {
+				if ( checkNotNull($("#peopleName"), "村民姓名") ) {
+					//TODO AJAX
+					$( this ).dialog( "close" );
+				}
+			},
+			Cancel: function() {
+				$( this ).dialog( "close" );
+			}
+		},
+		close: function() {
+			$("#remark").val("");
+			$("#peopleName").val( "" ).removeClass( "ui-state-error" );
+		}
+	});
+	
+	$("#delete-confirm-dialog").dialog({
+		autoOpen: false,
+		resizable: false,
+		height:140,
+		modal: true,
+		buttons: {
+				"删除": function() {
+				//TODO remove feature from map, need ajax here 
+				var selectedFeature = selectCtrlr.handlers.feature.feature;
+				selectCtrlr.map.removePopup(selectedFeature.popup);
+				selectedFeature.popup.destroy();
+				selectedFeature.popup = null;
+				selectCtrlr.layer.removeFeatures([selectedFeature]);
+				$( this ).dialog( "close" );
+			},
+				Cancel: function() {
+				$( this ).dialog( "close" );
+			}
+		}
+	});
+}
+

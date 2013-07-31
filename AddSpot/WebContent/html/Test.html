@@ -3,13 +3,6 @@
 <link type="text/css" rel="stylesheet" href="../css/jquery-ui-1.10.3.custom.min.css" />
 <link type="text/css" rel="stylesheet" href="../css/common.css" />
 <link type="text/css" rel="stylesheet" href="../css/myMap.css" />
-<script type="text/javascript" src="../js/jquery-1.7.2.min.js"></script>
-<script type="text/javascript" src="../js/jquery-ui-1.10.3.custom.min.js"></script>
-<script type="text/javascript" src="../js/OpenLayers_dev.js"></script>
-<script type="text/javascript" src="../js/myLayerSwitcher.js"></script>
-<script type="text/javascript" src="../js/myMarker.js"></script>
-<script type="text/javascript" src="../js/myPanZoomBar.js"></script>
-<script type="text/javascript" src="../js/myMap.js"></script>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Insert title here</title>
@@ -24,6 +17,7 @@
 			<p><input name="shape" id="point" type="radio" /><label for="point">画点</label></p>
 			<p><input name="shape" id="line" type="radio" /><label for="line">画线段</label></p>
 			<p><input name="shape" id="polygon" type="radio" /><label for="polygon">画多边形</label></p>
+			<p><input name="shape" id="drag" type="radio" /><label for="drag">拖拽热点</label></p>
 		</div>
 		<div id="polygonRadio" class="hide">
 			<p><input name="polygonType" id="freeform" type="radio" /><label for="freeform">任意多边形</label></p>
@@ -38,59 +32,34 @@
 		<div id="explore-map" style="width: 800px; height: 600px">
 		</div>
 	</div>
-<script type="text/javascript">
-	$(function(){
-		var lastPaintBrush;
-		
-		$("#controlRadio").buttonset();
-		$("#shapeRadio").buttonset();
-		$("#polygonRadio").buttonset();
-		$('[for=cursor]').click(function(){
-			if($(this).attr("aria-pressed") == "true"){
-				switchToUnEditMode();
-				$("#polygonRadio").hide("fast");
-				$("#shapeRadio").hide("fast");
-			}
+	<div id="point-people-dialog" title="村民信息" class="hide">
+		<p class="validateTips">村民信息</p>
+			<form>
+				<input type="hidden" name="mapId" />
+				<p>
+					<label for="peopleName">姓名</label>
+					<input type="text" name="peopleName" id="peopleName" class="text ui-widget-content ui-corner-all" />
+				</p>
+				<p>
+					<label for="remark">备注</label>
+					<textarea id="remark" rows="5" cols="8" class="text ui-widget-content ui-corner-all"></textarea>
+				</p>
+			</form>
+	</div>
+	<div id="delete-confirm-dialog" title="确认删除该热点?" class="hide">
+	</div>
+
+	<script type="text/javascript" src="../js/jquery-1.7.2.min.js"></script>
+	<script type="text/javascript" src="../js/jquery-ui-1.10.3.custom.min.js"></script>
+	<script type="text/javascript" src="../js/OpenLayers_dev.js"></script>
+	<script type="text/javascript" src="../js/myLayerSwitcher.js"></script>
+	<script type="text/javascript" src="../js/myMarker.js"></script>
+	<script type="text/javascript" src="../js/myPanZoomBar.js"></script>
+	<script type="text/javascript" src="../js/myMap.js"></script>
+	<script type="text/javascript">
+		$(function(){
+			initAll();
 		});
-		$('[for=drawer]').click(function(){
-			if($(this).attr("aria-pressed") == "true"){
-				if(lastPaintBrush){
-					lastPaintBrush.click();
-				}
-				$("#shapeRadio").show("fast");
-				if($('[for=polygon]').attr("aria-pressed") == "true"){
-					$("#polygonRadio").show("fast");
-				}
-			}
-		});
-		$('[for=point]').click(function(){
-			if($(this).attr("aria-pressed") == "true"){
-				switchToEditMode("point");
-				$("#polygonRadio").hide("fast");
-				lastPaintBrush = $(this);
-			}
-		});
-		$('[for=line]').click(function(){
-			if($(this).attr("aria-pressed") == "true"){
-				switchToEditMode("line");
-				$("#polygonRadio").hide("fast");
-				lastPaintBrush = $(this);
-			}
-		});
-		$('[for=polygon]').click(function(){
-			if($(this).attr("aria-pressed") == "true"){
-				$("#polygonRadio").show("fast");
-			}
-		});
-		$('#polygonRadio > p > label').click(function(){
-			switchToEditMode($(this).attr("for"));
-			lastPaintBrush = $(this);
-		});
-		
-		var mapManager = new MapManager();
-		mapManager.genMap({ view_width:"438", view_height:"620",mapId: "Map05",  mapName:"土地规划总图", mapImageUrl:"/images/Map05.jpg", }, 
-				{ points:[{x:157, y:288, featureId: 1}]});
-	});
-</script>
+	</script>
 </body>
 </html>
